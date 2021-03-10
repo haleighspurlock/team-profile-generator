@@ -13,7 +13,7 @@ test("Can set name via constructor arguments", () => {
     const name = 'Haleigh';
     const person = new Employee(name);
 
-    expect(person.name).toBe(name);
+    expect(person.name).toBe(name)
 });
 
 test("Can set id via constructor argument", () => {
