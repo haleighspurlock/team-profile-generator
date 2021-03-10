@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jset --verbose text/*"
+    "test": "jest --verbose test/*"
   },
   "keywords": [],
   "author": "",
