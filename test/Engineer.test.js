@@ -1,6 +1,7 @@
 // Starter file provided by Instructor (03/09/2021) AC
 
 const Engineer = require("../lib/Engineer");
+const Employee = require("../lib/Employee");
 
 test("Can set GitHUb account via constructor", () => {
     const githubTest = 'github';
