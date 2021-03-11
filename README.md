@@ -10,11 +10,15 @@
 
 ## Description
 ---
-<!-- TODO: ADD DESCRIPTION -->
+Node.js command line application that takes in information about employees on a software engineering team, then generates an HTML webpage that displays summaries for each person. Testing is key to making code maintainable, so a test unit was written for every part of the code to ensure it passed each test. There is a walkthrough video linked below to demonstrate functionality and all of the tests passing.
 
 Deployed Website: 
 
-![Team Profile Generator](*****Include Screenshot here******)
+![team-profile-penerator](./assets/nodeappjs.png)
+
+![Team-Profile-Generator](./assets/testjs.png)
+
+![Team-Profile-Generator](./assets/teamjs.png)
 
 ## Requirements 
 ---
