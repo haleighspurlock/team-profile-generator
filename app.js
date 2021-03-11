@@ -11,6 +11,9 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const PromptUI = require("inquirer/lib/ui/prompt");
+const { resolve } = require("path");
+const { rejects } = require("assert");
 
 const employees = [];
 
@@ -35,7 +38,7 @@ const employeeQuestions = {
             type: 'input',
             message: 'What is your office number?',
             name: 'office',
-        }
+        },
     ],
     'Engineer' : [
         {
@@ -81,43 +84,69 @@ const employeeQuestions = {
             name: 'school',
         }
     ],
-
 }
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-function start () {
-    inquirer.prompt([
+
+function askManagerQuestion() {
+    console.log("Hello Manager!")
+    let questions = employeeQuestions['Manager']
+    return inquirer.prompt(questions).then((data)=>{
+        createEmployee('Manager', data)
+    })
+}
+
+function getNextEmployeeRole() {
+    return inquirer.prompt([
         {
             type: 'list',
-            message: 'What role do you play on this team?',
-            name: 'role',
-            choices: ['Manager', 'Engineer', 'Intern'],
-        },
-    ]).then((data) => { 
-        const questions = employeeQuestions[data.role];
-        inquirer.prompt(questions).then((data2) => {
-            switch(data.role) {
-                case 'Manager' :
-                    const manager = new Manager (data2.name, data2.id, data2.email, data2.office);
-                    employees.push(manager)
-                    break
-                case 'Engineer' :
-                    const engineer = new Engineer (data2.name, data2.id, data2.email, data2.github);
-                    employees.push(engineer)
-                    break
-                case 'Intern' :
-                    const intern = new Intern (data2.name, data2.id, data2.email, data2.school);
-                    employees.push(intern)
-                    break
-            }
-            console.log(render(employees));
-        })
-    })
-};
+            message: 'What would you like to do next?',
+            name: 'options',
+            choices: ['Add an Engineer', 'Add an Intern', 'Finish Team Page']
+        }
+    ])
+}
 
-start();
+function getEmployeeInfo(role) {
+    const questions = employeeQuestions[role];
+    return inquirer.prompt(questions)
+}
 
+function createEmployee(role, employeeData) {
+    switch(role) {
+        case 'Manager' :
+            const manager = new Manager (employeeData.name, employeeData.id, employeeData.email, employeeData.office);
+            employees.push(manager)
+            break
+        case 'Engineer' :
+            const engineer = new Engineer (employeeData.name, employeeData.id, employeeData.email, employeeData.github);
+            employees.push(engineer)
+            break
+        case 'Intern' :
+            const intern = new Intern (employeeData.name, employeeData.id, employeeData.email, employeeData.school);
+            employees.push(intern)
+            break
+    }
+}
 
+async function createNextEmployee() {
+    const data = await getNextEmployeeRole();
+
+    if (data.options != 'Finish Team Page') {
+        var role = data.options === 'Add an Engineer' ? 'Engineer' : 'Intern';
+        getEmployeeInfo(role).then((employeeInfo) => {
+            createEmployee(role, employeeInfo);
+            createNextEmployee();
+        });
+    } else {
+        fs.writeFile(outputPath, render(employees), (error) => {
+            if (error)
+                console.log(error);
+        });
+    }
+}
+
+askManagerQuestion().then(()=>{
+    createNextEmployee()
+})
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
